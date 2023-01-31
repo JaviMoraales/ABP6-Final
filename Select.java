@@ -1,9 +1,11 @@
 package ABP6;
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +23,7 @@ public class Select {
 	public static ArrayList<String> nombreCampos;
 
 	// Sintaxis 1
-	public static void selectAllFromNombreTabla(String nombreTabla) throws IOException {
+	public static void selectAllFromNombreTabla() throws IOException {
 		int numeroCampos = editarYComprobarTablas.recogerNumeroCampos(nombreTabla);
 		File ficheroBinarioData = new File(nombreTabla + ".data");
 		FileInputStream fis = null;
@@ -30,10 +32,9 @@ public class Select {
 			fis = new FileInputStream(ficheroBinarioData);
 			dis = new DataInputStream(fis);
 			while (true) {
-				System.out.println(dis.readInt());
+				System.out.println("ID: "+dis.readInt());
 				for (int i = 0; i < numeroCampos; i++) {
-					System.out.println(dis.readUTF());
-					System.out.println(dis.readUTF());
+					System.out.println(dis.readUTF()+" --> "+dis.readUTF());
 				}
 			}
 		} catch (EOFException e) {
@@ -45,42 +46,43 @@ public class Select {
 	}
 
 	// Sintaxis 2
-	public static void selectNombresCamposFrom(String nombreTabla, ArrayList<String> nombresCampos) throws IOException {
-		int numeroCampos = editarYComprobarTablas.recogerNumeroCampos(nombreTabla);
-		File ficheroBinarioData = new File(nombreTabla + ".data");
-		FileInputStream fis = null;
-		DataInputStream dis = null;
-		try {
-			fis = new FileInputStream(ficheroBinarioData);
-			dis = new DataInputStream(fis);
-			while (dis.available() != -1) {
-				if (nombresCampos.contains("id")) {
-					System.out.println(dis.readInt());
-				} else {
-					dis.readInt();
-				}
-				for (int i = 0; i < numeroCampos; i++) {
-					String linea = dis.readUTF();
-					;
-					if (nombresCampos.contains((linea))) {
-						System.out.println(linea);
-						System.out.println(dis.readUTF());
+	public static void selectNombresCamposFrom( ) throws IOException {
+		if(existenLosCampos(agregarCamposTabla(nombreTabla))){
+			int numeroCampos = editarYComprobarTablas.recogerNumeroCampos(nombreTabla);
+			File ficheroBinarioData = new File(nombreTabla + ".data");
+			FileInputStream fis = null;
+			DataInputStream dis = null;
+			try {
+				fis = new FileInputStream(ficheroBinarioData);
+				dis = new DataInputStream(fis);
+				while (dis.available() != -1) {
+					if (nombreCampos.contains("id")) {
+						System.out.println("ID --> "+dis.readInt());
 					} else {
-						dis.readUTF();
+						dis.readInt();
 					}
-
+					for (int i = 0; i < numeroCampos; i++) {
+						String nombreCampo = dis.readUTF();
+						if (nombreCampos.contains((nombreCampo))) {
+							System.out.println(nombreCampo+" --> "+dis.readUTF());
+						} else {
+							dis.readUTF();
+						}
+	
+					}
 				}
+			} catch (EOFException e) {
+				System.out.println("se ha acabado el archivo");
+			} finally {
+				fis.close();
+				dis.close();
 			}
-		} catch (EOFException e) {
-			System.out.println("se ha acabado el archivo");
-		} finally {
-			fis.close();
-			dis.close();
 		}
+		
 	}
 
 	// Sintaxis 3
-	public static void selectAllFromTabla_Valor(String nombreTabla, String valor, String nombreCampo) throws IOException {
+	public static void selectAllFromTabla_Valor() throws IOException {
 				int numeroCampos = editarYComprobarTablas.recogerNumeroCampos(nombreTabla);
 				File ficheroBinarioData = new File(nombreTabla + ".data");
 				HashMap<String,String> camposYValores = new HashMap<>();
@@ -99,11 +101,11 @@ public class Select {
 						}
 						if(camposYValores.containsKey(nombreCampo)){
 							if(camposYValores.containsValue(valor)){
+								System.out.println("ID --> "+id);
 								for(Map.Entry<String, String> entry : camposYValores.entrySet()) {
 									String clave = entry.getKey();
-									System.out.println(clave);
 									String valorActual = entry.getValue();
-									System.out.println(valorActual);
+									System.out.println(clave+" --> "+valorActual);
 								}
 							}
 						}
@@ -120,6 +122,38 @@ public class Select {
 	public static void selectAllFromTabla_Between() {
 		//Pillar el numero de tipo de campo en el archivo de texto nombreTabla.metadata y 
 		//ver si es 1 o 2. Si no error.
+	}
+
+	public static ArrayList<String> agregarCamposTabla(String nombreTabla) throws IOException{
+        FileReader fr = new FileReader(nombreTabla+".metadata");
+        BufferedReader bfr = new BufferedReader(fr);
+        ArrayList<String> arrayList = new ArrayList<>();
+        String campo = "";
+        try {
+            while(campo!=null){
+                campo = bfr.readLine();
+				arrayList.add("id");
+                if(campo!=null){
+                    String nombreCampo = campo.substring(0,campo.indexOf(","));
+                    arrayList.add(nombreCampo);
+                }
+            }
+        } catch (EOFException e) {
+           System.out.println("se ha acabado el archivo");
+           bfr.close();
+        }
+        bfr.close();
+        return arrayList;
+    }
+
+	public static boolean existenLosCampos(ArrayList<String> nombresCamposTabla){
+		for(int i=0;i<nombreCampos.size();i++){
+			
+			if(!nombresCamposTabla.contains(nombreCampos.get(i))){
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public static boolean comprobarSelect(String comando) throws IOException {
@@ -172,7 +206,7 @@ public class Select {
 		}
 
 		if ((comando.charAt(cont) == ';') || (comando.charAt(cont) + 1 == ';')) {
-			selectAllFromNombreTabla(nombreTabla);
+			selectAllFromNombreTabla();
 			return true;
 		}
 
@@ -199,12 +233,12 @@ public class Select {
 			}
 
 			if ((comando.charAt(cont) == ';') && (cont == comando.length() - 1)) {
-				selectAllFromTabla_Valor(nombreTabla, valor, nombreCampo);
+				selectAllFromTabla_Valor();
 				return true;
 			}
 
 			if ((comando.charAt(cont) + 1 == ';') && (cont + 1 == comando.length() - 1)) {
-				selectAllFromTabla_Valor(nombreTabla, valor, nombreCampo);
+				selectAllFromTabla_Valor( );
 				return true;
 			}
 		}
@@ -317,12 +351,12 @@ public class Select {
 		}
 
 		if ((comando.charAt(cont) == ';') && (cont == comando.length() - 1)) {
-			selectNombresCamposFrom(nombreTabla, nombreCampos);
+			selectNombresCamposFrom();
 			return true;
 		}
 
 		if ((comando.charAt(cont + 1) == ';') && (cont + 1 == comando.length() - 1)) {
-			selectNombresCamposFrom(nombreTabla, nombreCampos);
+			selectNombresCamposFrom();
 			return true;
 		}
 

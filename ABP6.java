@@ -36,8 +36,8 @@ public class ABP6 {
 		}
 		
 		if (palabra.equals("inse")) {
-            //insert into tabla1 (nombre,apellidos,edad) values (Javi,Morales,19);
 			//insert into tabla1 (nombre,apellidos,edad) values (Alvaro,Santos,20);
+            //insert into tabla1 (nombre,apellidos,edad) values (Javi,Morales,19);
 
 			verificarInsert.confirmarInsert(comando);
 			
@@ -45,7 +45,7 @@ public class ABP6 {
 		}
 		//select id,nombre from tabla1;
 		//select * from tabla1;
-		//select * from tabla1 where nombre=javi;
+		//select * from tabla1 where nombre=alvaro;
 		if (palabra.equals("sele")) {
 			Select.comprobarSelect(comando);
 			existe=true;
