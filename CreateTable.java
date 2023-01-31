@@ -1,136 +1,158 @@
 package ABP6;
 
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class CreateTable {
 	
 	public static int contador=0;
-	public static ArrayList<String> nombreTablas=new ArrayList<String>();
 	public static ArrayList<String> camposTabla=new ArrayList<String>();
 	public static ArrayList<Integer> tipoCampo=new ArrayList<Integer>();
-	
-	
-	public static void createTable() throws IOException {
-		
-		File ficheroTabla = new File("D:\\Users\\dam223\\Desktop\\nombre_tabla.metadata");
-		DataOutputStream dataOS = new  DataOutputStream(new FileOutputStream(ficheroTabla));
-	
-		//ArrayList<Integer> longitudesCampo = new ArrayList<>();
-		
-		for(int i=0;i<2;i++) {
-		    dataOS.writeUTF(camposTabla.get(i)); 
-		    dataOS.writeInt(tipoCampo.get(i));
-			//dataOS.writeInt(longitudesCampo.get(i));
-		}
-		dataOS.close();
-		File ficheroBinarioData = new File("D:\\Users\\dam223\\Desktop\\nombre_tabla.data");
-		
-	}
-	
+	public static ArrayList<Integer> longitudesCampo = new ArrayList<>();
+	public static String nombreTabla;
+
+
 	public static boolean comprobarCreateTable(String comando) throws IOException {
-		String create1="create table";
-		String create2="";
-		for (int i=0; i<11; i++) {
-			create2=create2+comando.charAt(i);
-		}
 		
-		if (create1.equalsIgnoreCase(create2)!=true) {
-			System.out.println("Error de sintaxis");
-			return false;
-		}
-		if (comprobarNombreNuevaTabla(comando)!=true) {
-			System.out.println("El nombre escrito existe.");
-			return false;
-		}
-		if (comprobarParametrosCreateTable(comando)!=true) {
-			System.out.println("Los parámetros están mal escritos");
-			return false;
-		}
-		return true;
-	}
-	
-	public static boolean comprobarNombreNuevaTabla(String comando) {
+		camposTabla.clear();
+		tipoCampo.clear();
+		longitudesCampo.clear();
+		nombreTabla="";
 		
-		//comprueba que despues del create table hay un espacio
-		if (comando.charAt(11)!=' ') {
+		comando = comando.replaceAll("\\s{2,}", " ");                                      
+		comando = comando.trim();
+		
+		String createTable1="create table";
+		String createTable2=comando.substring(0, 12);
+		
+		if (comando.charAt(comando.length()-1)!=';') {
 			return false;
 		}
 		
-		//recoge el nombre de la tabla
-		int cont=12;
-		String nombre="";
-		while (comando.charAt(cont)!=' ') {
-			nombre=nombre+comando.charAt(cont);
+		if (!createTable1.equalsIgnoreCase(createTable2)) {
+			return false;
+		}
+		
+		if (comando.charAt(12)!=' ') {
+			return false;
+		}
+		
+		int cont=13;
+		
+		while ((comando.charAt(cont)!=' ')&&(comando.charAt(cont)!='(')) {
+			nombreTabla=nombreTabla+comando.charAt(cont);
 			cont++;
 		}
-		//comprueba que no hay nombres repetidos
-		for (int i=0; i<nombreTablas.size(); i++) {
-			if (nombreTablas.get(i)!=null) {
-				if (nombreTablas.get(i).equals(nombre)) {
+		
+		nombreTabla.toLowerCase();
+		//C:\\Users\\Usuario\\Desktop\\
+		File archivoNombresTablas = new File( "nombresTablas.txt");
+		if(archivoNombresTablas.exists()) {
+			if (editarYComprobarTablas.existeNombreTabla(archivoNombresTablas,nombreTabla)==true) {
+				System.out.println("El nombre de la tabla ya existe");
+				return false;
+			}
+			else {
+				editarYComprobarTablas.escribirNombreTablaEnArchivo(nombreTabla, archivoNombresTablas);
+			}
+		}
+		else {
+			editarYComprobarTablas.escribirNombreTablaEnArchivo(nombreTabla, archivoNombresTablas);
+		}
+		
+		if (comando.charAt(cont)==' ') {
+			cont++;
+			if (comando.charAt(cont)!='(') {
+				return false;
+			}
+		}
+		
+		int parentesisAbierto=comando.indexOf('(');
+		int parentesisCerrado=comando.lastIndexOf(')');
+		String parentesis=comando.substring(parentesisAbierto+1, parentesisCerrado);
+		String[] valoresSeparados=parentesis.split(",");
+		
+		for (int i=0; i<valoresSeparados.length; i++) {
+			valoresSeparados[i]=valoresSeparados[i].trim();
+		}
+		
+		for (int i=0; i<valoresSeparados.length; i++) {
+			cont=0;
+			String nombreCampo="";
+			String tiposCampo="";
+			int tipoCampo2=0;
+			while ((valoresSeparados[i].charAt(cont)!=' ')) {
+				nombreCampo=nombreCampo+valoresSeparados[i].charAt(cont);
+				
+				try {
+					cont++;
+					valoresSeparados[i].charAt(cont);
+				} catch(Exception e) {
 					return false;
 				}
 			}
-		}
-		nombreTablas.add(nombre);
-		contador=cont++;
-		return true;
-	}
-	
-	public static boolean comprobarParametrosCreateTable(String comando) throws IOException {
-		
-		//Comprueba que se abre parentesis
-		if (comando.charAt(contador)!='(') {
-			return false;
-		}
-		int cont=contador+1;
-		if (comando.charAt(cont)==' ') {
-			return false;
-		}
-		
-		String nombreCampo="";
-		while(comando.charAt(cont)!=')') {
-			while (comando.charAt(cont)!=' ') {
-				nombreCampo=nombreCampo+comando.charAt(cont);
-				cont++;
-			}
-			camposTabla.add(nombreCampo);
-		
-		
 			cont++;
-			if ((comando.charAt(cont)==1)||(comando.charAt(cont)==2)||(comando.charAt(cont)==3)) {
-				tipoCampo.add(Character.getNumericValue(comando.charAt(cont)));
-			}
-			else {
+			
+			if (valoresSeparados[i].charAt(cont)==' ') {
 				return false;
 			}
 			
-			cont++;
+			tiposCampo=Character.toString(valoresSeparados[i].charAt(cont));
 			
-			if ((comando.charAt(cont)==',')||(comando.charAt(cont)==')')) {
-				if (comando.charAt(cont)==',') { 
-					cont++;
-					if (comando.charAt(cont)!=' ') {
-						return false;
-					}
-					else {
-						cont++;
-					}
+			try {
+				 tipoCampo2=Integer.parseInt(tiposCampo); 
+			} catch(Exception e) {
+				return false;
+			}
+			
+			if (tipoCampo2==3) {
+				if (tipoCampo2!=3) {
+					return false;
+				}
+				
+				if (valoresSeparados[i].indexOf('(')!=valoresSeparados[i].lastIndexOf('(')) {
+					return false;
+				}
+				
+				if (valoresSeparados[i].indexOf(')')!=valoresSeparados[i].lastIndexOf(')')) {
+					return false;
+				}
+ 		
+				
+				int parentesisAbierto1=valoresSeparados[i].indexOf('(');
+				int parentesisCerrado1=valoresSeparados[i].indexOf(')');
+				
+				if ((parentesisAbierto1==-1)||(parentesisCerrado1==-1)) {
+					return false;
+				}
+				
+				String longitudDelCampo=valoresSeparados[i].substring(parentesisAbierto1+1, parentesisCerrado1);
+				
+				int longitudDelCampo1=0;
+				try {
+					longitudDelCampo1=Integer.parseInt(longitudDelCampo);
+				} catch(Exception e) {
+					return false;
+				}
+				
+				longitudesCampo.add(longitudDelCampo1);
+			}
+			
+			
+			for (int k=0; k<camposTabla.size(); k++) {
+				if (camposTabla.get(k).equals(nombreCampo)) {
+					return false;
 				}
 			}
-			else {
-				return false;
-			}
+			
+ 			camposTabla.add(nombreCampo);
+			tipoCampo.add(tipoCampo2);
 		}
 		
-		createTable();
-		camposTabla.clear();
-		tipoCampo.clear();
 		
+		editarYComprobarTablas.creacionTablaMetadata(nombreTabla, longitudesCampo, tipoCampo, camposTabla);
+		editarYComprobarTablas.creacionTablaData(nombreTabla);
 		return true;
 	}
-	
 }

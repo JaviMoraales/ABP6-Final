@@ -1,42 +1,15 @@
 package ABP6;
 
-import java.io.File;
-import java.util.ArrayList;
-
 public class DropTable {
-
-	public static void dropTable(String nombreTabla) {
-		
-		ArrayList<String> nombresTablas = new ArrayList<>();
-		boolean tablaEncontrada = false;
-		File archivoTabla =null,archivoTablaData;
-		for(int i=0;i<nombresTablas.size();i++) {
-			if(nombresTablas.contains(nombreTabla)) {
-				tablaEncontrada=true;
-			}
-		}
-		//Cambiar la direccion del archivo 
-		if(tablaEncontrada) {
-			 archivoTabla =  new File("D:\\Users\\dam223\\Desktop\\"+nombreTabla+".metadata");
-			 if(archivoTabla.exists()) {
-				 archivoTabla.delete();
-			 }
-			 else
-				 System.out.println("El archivo "+nombreTabla+".metadata no existe");
-			 archivoTablaData = new File("D:\\Users\\dam223\\Desktop\\"+nombreTabla+".data");
-			 if(archivoTablaData.exists()) {
-				 archivoTablaData.delete();
-			 }
-			 else
-				 System.out.println("El archivo "+nombreTabla+".data no existe");
-			 nombresTablas.remove(nombreTabla);
-		}
-	}
 	
 	public static boolean comprobarDropTable(String comando) {
 		
+		comando=comando.trim();
+		comando=comando.replaceAll("\\s{2,}", " ");
+		
 		String dropTable1=comando.substring(0, 10);
 		String dropTable2="drop table";
+		
 		int longitud=comando.length();
 		
 		if (!dropTable1.equalsIgnoreCase(dropTable2)) {
@@ -52,20 +25,22 @@ public class DropTable {
 		}
 
 		String nombreTabla="";
-		for (int i=11; i<comando.length()-1; i++) {
-			nombreTabla=nombreTabla+comando.charAt(i);
+		int cont=11;
+		
+		while ((comando.charAt(cont)!=' ')&&(comando.charAt(cont)!=';')) {
+			nombreTabla=nombreTabla+comando.charAt(cont);
+			cont++;
 		}
 		
-		for (int i=0; i<nombreTabla.length(); i++) {
-			if (nombreTabla.charAt(i)==' ') {
+		if (comando.charAt(cont)==' ') {
+			if (comando.charAt(cont+1)!=';') {
 				return false;
 			}
 		}
 		
-		dropTable(nombreTabla);
+		nombreTabla=nombreTabla.toLowerCase();
+		
+		editarYComprobarTablas.dropTable(nombreTabla);
 		return true;
 	}
-	
-	
-
 }
