@@ -14,7 +14,7 @@ public class editarYComprobarTablas {
     public static void creacionTablaMetadata(String nombreTabla,ArrayList<Integer> longitudesCampo,
     ArrayList<Integer> tiposCampos,ArrayList<String> nombresCampos) throws IOException {
         // C:\\Users\\Usuario\\Desktop\\
-        File ficheroTabla = new File("C:\\Users\\Usuario\\Desktop\\"+nombreTabla+".metadata");
+        File ficheroTabla = new File(nombreTabla+".metadata");
         FileWriter fw = new FileWriter(ficheroTabla);        
         BufferedWriter bfw = new BufferedWriter(fw);
         boolean todoBien = true;
@@ -34,19 +34,43 @@ public class editarYComprobarTablas {
             }
             if (todoBien) {
                 if (tiposCampos.get(i)==3) {
-                    bfw.write(nombresCampos.get(i)+" "+tiposCampos.get(i)+" "+longitudesCampo.get(i)+"\n");
+                    bfw.write(nombresCampos.get(i)+","+tiposCampos.get(i)+","+longitudesCampo.get(i)+"\n");
                 }
                 else{
-                    bfw.write(nombresCampos.get(i)+" "+tiposCampos.get(i)+"\n");
+                    bfw.write(nombresCampos.get(i)+","+tiposCampos.get(i)+"\n");
                 }
             }
         }
         bfw.close();
         fw.close();
     }
+    public static int recogerNumeroCampos(String nombreTabla) throws IOException{
+        String nombreDeLaTablaVerdadera = null;
+        if(nombreTabla.contains(".data")){
+            nombreDeLaTablaVerdadera = nombreTabla.substring(0,nombreTabla.indexOf('.'));
+        }
+        else{
+            nombreDeLaTablaVerdadera = nombreTabla;
+        }
+        File archivoNombresTablas = new File (nombreDeLaTablaVerdadera+".metadata");
+        FileReader fr = new FileReader(archivoNombresTablas);
+        BufferedReader bfr = new BufferedReader(fr);
+        String campo = "";
+        int numeroCampos = 0;
+        try{
+            while((campo = bfr.readLine())!=null){
+                numeroCampos++;
+            }    
+        }catch(Exception e){
+            e.printStackTrace();
+            bfr.close();
+        }
+        bfr.close();
+        return numeroCampos;
+    }
     //Archivo Binario
     public static void creacionTablaData(String nombreTabla){
-        File ficheroBinarioData = new File("C:\\Users\\Usuario\\Desktop\\"+nombreTabla+".data");
+        File ficheroBinarioData = new File(nombreTabla+".data");
 		try {
             ficheroBinarioData.createNewFile();
         } catch (IOException e) {
@@ -77,7 +101,7 @@ public class editarYComprobarTablas {
     }
     public static void dropTable(String nombreTabla){
         try {
-            File nombreTablas = new File("C:\\Users\\Usuario\\Desktop\\nombresTablas.txt");
+            File nombreTablas = new File("nombresTablas.txt");
             if(existeNombreTabla(nombreTablas, nombreTabla)){
                 File archivoParaSobreescribir = new File(nombreTablas.getAbsolutePath()+".tmp");
                 PrintWriter pw = new PrintWriter(new FileWriter(archivoParaSobreescribir));
@@ -93,9 +117,9 @@ public class editarYComprobarTablas {
                 bfr.close();
                 nombreTablas.delete();
                 archivoParaSobreescribir.renameTo(nombreTablas);
-                File tablaMetadata = new File("C:\\Users\\Usuario\\Desktop\\"+nombreTabla+".metadata");
+                File tablaMetadata = new File(nombreTabla+".metadata");
                 tablaMetadata.delete();
-                File tablaData = new File("C:\\Users\\Usuario\\Desktop\\"+nombreTabla+".data");
+                File tablaData = new File(nombreTabla+".data");
                 tablaData.delete();
             }
         } catch (IOException e) {

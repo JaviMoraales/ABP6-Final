@@ -24,7 +24,7 @@ public class ABP6 {
 		
 		
 		if (palabra.equals("crea")) {
-			//create table tabla1 (campo1 3(40));
+			//create table tabla1 (nombre 3(40),apellidos 3(10),edad 1);
 			CreateTable.comprobarCreateTable(comando);
 			existe=true;
 		}
@@ -35,11 +35,13 @@ public class ABP6 {
 		}
 		
 		if (palabra.equals("inse")) {
-             //insert into tabla1 (campo1) values (alvaro);
+             //insert into tabla1 (nombre,apellidos,edad) values (Javi,Morales,19);
 			verificarInsert.confirmarInsert(comando);
+			
 			existe=true;
 		}
-		
+		//select id,nombre from tabla1;
+		//select * from tabla1;
 		if (palabra.equals("sele")) {
 			Select.comprobarSelect(comando);
 			existe=true;

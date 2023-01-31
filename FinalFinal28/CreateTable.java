@@ -47,7 +47,7 @@ public class CreateTable {
 		
 		nombreTabla.toLowerCase();
 		//C:\\Users\\Usuario\\Desktop\\
-		File archivoNombresTablas = new File( "C:\\Users\\Usuario\\Desktop\\nombresTablas.txt");
+		File archivoNombresTablas = new File( "nombresTablas.txt");
 		if(archivoNombresTablas.exists()) {
 			if (editarYComprobarTablas.existeNombreTabla(archivoNombresTablas,nombreTabla)==true) {
 				System.out.println("El nombre de la tabla ya existe");
@@ -75,7 +75,6 @@ public class CreateTable {
 		
 		for (int i=0; i<valoresSeparados.length; i++) {
 			valoresSeparados[i]=valoresSeparados[i].trim();
-			System.out.println(valoresSeparados[i]);
 		}
 		
 		for (int i=0; i<valoresSeparados.length; i++) {
@@ -151,14 +150,7 @@ public class CreateTable {
 			tipoCampo.add(tipoCampo2);
 		}
 		
-		for (int i=0; i<camposTabla.size(); i++) {
-			System.out.println(camposTabla.get(i));
-			System.out.println(tipoCampo.get(i));
-		}
 		
-		for (int i=0; i<longitudesCampo.size(); i++) {
-			System.out.println(longitudesCampo.get(i));
-		}
 		editarYComprobarTablas.creacionTablaMetadata(nombreTabla, longitudesCampo, tipoCampo, camposTabla);
 		editarYComprobarTablas.creacionTablaData(nombreTabla);
 		return true;

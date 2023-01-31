@@ -38,6 +38,7 @@ public class insertEnTabla {
                 salida.writeUTF(value);
             }
         }catch(IOException IOE){
+            IOE.printStackTrace();
             salida.close();
             dis.close();
             fis.close();
@@ -47,6 +48,7 @@ public class insertEnTabla {
         salida.close();
     }
     public static int recogerNumero(String nombreTabla) throws IOException{
+        int numeroCampos = editarYComprobarTablas.recogerNumeroCampos(nombreTabla);
         FileInputStream fis = null;
         DataInputStream dis = null;
         int numeroID = 0;
@@ -62,10 +64,10 @@ public class insertEnTabla {
                 else{
                     numeroID = numeroAux;
                 }
-                dis.readUTF();
-                dis.readUTF();
-                dis.readUTF();
-                dis.readUTF();
+                for(int i=0;i<numeroCampos;i++){
+                    dis.readUTF();
+                    dis.readUTF();
+                }
                 
             }
         } catch (EOFException e) {

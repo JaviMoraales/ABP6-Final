@@ -14,7 +14,7 @@ public class verificarInsert{
     //Insert into tabla1 (campo1,campo2) values (alvaro);
     public static boolean confirmarInsert(String frase) throws IOException{
         frase = frase.toLowerCase();
-        File archivoNombresTablas = new File("C:\\Users\\Usuario\\Desktop\\nombresTablas.txt");
+        File archivoNombresTablas = new File("nombresTablas.txt");
         frase = frase.replaceAll("\\s{2,}", " ");                                      
         frase = frase.trim();
         String comando = frase.substring(0,11);
@@ -57,8 +57,9 @@ public class verificarInsert{
         if(estaBienEscrito){
             System.out.println("El comando está bien");
             //escribirCreateTable();
-            if(comprobarNombreCampos(agregarCamposTabla("C:\\Users\\Usuario\\Desktop\\"+nombreTabla+".metadata"), nombresCampos)){
-                insertEnTabla.insertar(guardarCampoOValor(nombresCampos,valoresCampos),"C:\\Users\\Usuario\\Desktop\\"+nombreTabla+".data");
+            if(comprobarNombreCampos(agregarCamposTabla(nombreTabla+".metadata"), nombresCampos)){
+                insertEnTabla.insertar(guardarCampoOValor(nombresCampos,valoresCampos),nombreTabla+".data");
+                //editarYComprobarTablas.recogerTipoDato(nombreTabla);
                 return true;
             }
             else{
@@ -98,7 +99,7 @@ public class verificarInsert{
             while(campo!=null){
                 campo = bfr.readLine();
                 if(campo!=null){
-                    String nombreCampo = campo.substring(0,campo.indexOf(" "));
+                    String nombreCampo = campo.substring(0,campo.indexOf(","));
                     arrayList.add(nombreCampo);
                 }
             }
