@@ -46,6 +46,7 @@ public class ABP6 {
 		//select id,nombre from tabla1;
 		//select * from tabla1;
 		//select * from tabla1 where nombre=alvaro;
+		//select * from tabla1 where edad between 22 and 23;
 		if (palabra.equals("sele")) {
 			Select.comprobarSelect(comando);
 			existe=true;

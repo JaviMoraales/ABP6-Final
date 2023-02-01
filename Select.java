@@ -21,6 +21,7 @@ public class Select {
 	public static int valorNumerico2 = 0;
 
 	public static ArrayList<String> nombreCampos;
+	public static HashMap<String,String> tiposCampos = new HashMap<>();
 
 	// Sintaxis 1
 	public static void selectAllFromNombreTabla() throws IOException {
@@ -119,23 +120,64 @@ public class Select {
 	}
 
 	// Sintaxis 4
-	public static void selectAllFromTabla_Between() {
+	public static void selectAllFromTabla_Between() throws IOException {
 		//Pillar el numero de tipo de campo en el archivo de texto nombreTabla.metadata y 
 		//ver si es 1 o 2. Si no error.
+		int numeroCampos = editarYComprobarTablas.recogerNumeroCampos(nombreTabla);
+		agregarCamposTabla(nombreTabla);
+				File ficheroBinarioData = new File(nombreTabla + ".data");
+				HashMap<String,String> camposYValores = new HashMap<>();
+				FileInputStream fis = null;
+				DataInputStream dis = null;
+				int id = 0;
+				try {
+					fis = new FileInputStream(ficheroBinarioData);
+					dis = new DataInputStream(fis);
+					while (true) {
+						id = dis.readInt();
+						for (int i = 0; i < numeroCampos; i++) {
+							String nombreCampoActual = dis.readUTF();
+							String valorCampo = dis.readUTF();
+							camposYValores.put(nombreCampoActual, valorCampo);
+						}
+						if(camposYValores.containsKey(nombreCampo)){
+							if(tiposCampos.get(nombreCampo).equals("1")){
+								int valor = Integer.parseInt(camposYValores.get(nombreCampo));
+								if(valorNumerico1<=valor && valorNumerico2>=valor){
+									System.out.println("ID --> "+id);
+									for(Map.Entry<String, String> entry : camposYValores.entrySet()) {
+										String clave = entry.getKey();
+										String valorActual = entry.getValue();
+										System.out.println(clave+" --> "+valorActual);
+									}
+								}
+							}
+							
+						}
+					}
+				} catch (EOFException e) {
+					System.out.println("se ha acabado el archivo");
+				} finally {
+					fis.close();
+					dis.close();
+				}
+
 	}
 
 	public static ArrayList<String> agregarCamposTabla(String nombreTabla) throws IOException{
         FileReader fr = new FileReader(nombreTabla+".metadata");
         BufferedReader bfr = new BufferedReader(fr);
         ArrayList<String> arrayList = new ArrayList<>();
+		
         String campo = "";
         try {
             while(campo!=null){
                 campo = bfr.readLine();
 				arrayList.add("id");
                 if(campo!=null){
-                    String nombreCampo = campo.substring(0,campo.indexOf(","));
+                    String [] campos = campo.split(",");
                     arrayList.add(nombreCampo);
+					tiposCampos.put(nombreCampo, campos[1]);
                 }
             }
         } catch (EOFException e) {
