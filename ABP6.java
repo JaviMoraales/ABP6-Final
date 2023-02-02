@@ -26,6 +26,7 @@ public class ABP6 {
 		
 		if (palabra.equals("crea")) {
 			//create table tabla1 (nombre 3(40),apellidos 3(10),edad 1);
+			//create table tabla2 (sueldo 2,nombre 3(10),edad 1);
 			CreateTable.comprobarCreateTable(comando);
 			existe=true;
 		}
@@ -38,7 +39,7 @@ public class ABP6 {
 		if (palabra.equals("inse")) {
 			//insert into tabla1 (nombre,apellidos,edad) values (Alvaro,Santos,20);
             //insert into tabla1 (nombre,apellidos,edad) values (Javi,Morales,19);
-
+			//insert into tabla2 (nombre,sueldo,edad) values (alvaro,500.2,20);
 			verificarInsert.confirmarInsert(comando);
 			
 			existe=true;

@@ -138,7 +138,12 @@ public class CreateTable {
 				
 				longitudesCampo.add(longitudDelCampo1);
 			}
-			
+			if(tipoCampo2 == 1){
+				longitudesCampo.add(0);
+			}
+			if(tipoCampo2==2){
+				longitudesCampo.add(0);
+			}
 			
 			for (int k=0; k<camposTabla.size(); k++) {
 				if (camposTabla.get(k).equals(nombreCampo)) {

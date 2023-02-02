@@ -37,7 +37,7 @@ public class editarYComprobarTablas {
                     bfw.write(nombresCampos.get(i)+","+tiposCampos.get(i)+","+longitudesCampo.get(i)+"\n");
                 }
                 else{
-                    bfw.write(nombresCampos.get(i)+","+tiposCampos.get(i)+","+0+"\n");
+                    bfw.write(nombresCampos.get(i)+","+tiposCampos.get(i)+"\n");
                 }
             }
         }
