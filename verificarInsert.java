@@ -1,8 +1,11 @@
 package ABP6;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,6 +15,9 @@ import java.util.regex.Pattern;
 
 public class verificarInsert{
     //Insert into tabla1 (campo1,campo2) values (alvaro);
+	
+	public static int numeroCaracteres=0;
+	
     public static boolean confirmarInsert(String frase) throws IOException{
         frase = frase.toLowerCase();
         File archivoNombresTablas = new File("nombresTablas.txt");
@@ -55,11 +61,20 @@ public class verificarInsert{
             } 
         }
         if(estaBienEscrito){
-            System.out.println("El comando está bien");
             //escribirCreateTable();
             if(comprobarNombreCampos(agregarCamposTabla(nombreTabla+".metadata"), nombresCampos)){
+            	
+            	String[] separados=valoresCampos.split(",");
+            	String[] nombresCampos2=nombresCampos.split(",");
+            	
+            	for (int i=0; i<separados.length; i++) {
+            		if (comprobarLongitudDeCampo(nombreTabla,nombresCampos2[i], separados[i])==false) {
+            			System.out.println("Mal");
+            			return false;
+            		}
+            	}
+            	
                 insertEnTabla.insertar(guardarCampoOValor(nombresCampos,valoresCampos),nombreTabla+".data");
-                //editarYComprobarTablas.recogerTipoDato(nombreTabla);
                 return true;
             }
             else{
@@ -178,5 +193,37 @@ public class verificarInsert{
 			return true;
 		else
 			return false;
+    }
+    
+    public static boolean comprobarLongitudDeCampo(String nombreTabla, String campo, String contenido) throws IOException {
+    	 File ficheroTabla = new File(nombreTabla+".metadata");
+    	 DataInputStream leer=new DataInputStream(new FileInputStream(ficheroTabla));
+    	 
+    	 try {
+    		 while (leer.available()!=-1) {
+    			 String entrada=leer.readLine();
+    			 String[] opciones=entrada.split(",");
+    			 
+    			 if (opciones.length==3) {
+    				 if (opciones[0].equals(campo)) {
+    					 String parsear=opciones[2];
+    					 int longitudCampo=Integer.parseInt(parsear);
+    					 int lon=contenido.length();
+    					 
+    					 if (lon>longitudCampo) {
+    						 leer.close();
+    						 return false;
+    					 } else {
+    						 leer.close();
+    						 return true;
+    					 }
+    				 }
+    			 }
+    		 }
+    	 }catch(Exception e) {
+    		 leer.close();
+    	 }
+    	 leer.close();
+    	return true;
     }
 }

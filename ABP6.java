@@ -27,7 +27,9 @@ public class ABP6 {
 		if (palabra.equals("crea")) {
 			//create table tabla1 (nombre 3(40),apellidos 3(10),edad 1);
 			//create table tabla2 (sueldo 2,nombre 3(10),edad 1);
-			CreateTable.comprobarCreateTable(comando);
+			if (CreateTable.comprobarCreateTable(comando)==false) {
+				System.out.println("Error de sintaxis");
+			}
 			existe=true;
 		}
 		//drop table tabla1;

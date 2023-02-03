@@ -46,21 +46,7 @@ public class CreateTable {
 		}
 		
 		nombreTabla.toLowerCase();
-		//C:\\Users\\Usuario\\Desktop\\
-		File archivoNombresTablas = new File( "nombresTablas.txt");
-		if(archivoNombresTablas.exists()) {
-			if (editarYComprobarTablas.existeNombreTabla(archivoNombresTablas,nombreTabla)==true) {
-				System.out.println("El nombre de la tabla ya existe");
-				return false;
-			}
-			else {
-				editarYComprobarTablas.escribirNombreTablaEnArchivo(nombreTabla, archivoNombresTablas);
-			}
-		}
-		else {
-			editarYComprobarTablas.escribirNombreTablaEnArchivo(nombreTabla, archivoNombresTablas);
-		}
-		
+				
 		if (comando.charAt(cont)==' ') {
 			cont++;
 			if (comando.charAt(cont)!='(') {
@@ -155,6 +141,21 @@ public class CreateTable {
 			tipoCampo.add(tipoCampo2);
 		}
 		
+		//C:\\Users\\Usuario\\Desktop\\
+				File archivoNombresTablas = new File( "nombresTablas.txt");
+				if(archivoNombresTablas.exists()) {
+					if (editarYComprobarTablas.existeNombreTabla(archivoNombresTablas,nombreTabla)==true) {
+						System.out.println("El nombre de la tabla ya existe");
+						return false;
+					}
+					else {
+						editarYComprobarTablas.escribirNombreTablaEnArchivo(nombreTabla, archivoNombresTablas);
+					}
+				}
+				else {
+					editarYComprobarTablas.escribirNombreTablaEnArchivo(nombreTabla, archivoNombresTablas);
+				}
+
 		
 		editarYComprobarTablas.creacionTablaMetadata(nombreTabla, longitudesCampo, tipoCampo, camposTabla);
 		editarYComprobarTablas.creacionTablaData(nombreTabla);
