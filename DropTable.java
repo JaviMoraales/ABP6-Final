@@ -1,4 +1,4 @@
-package ABP6;
+package AccesoADatos.ABP.ABP6;
 
 public class DropTable {
 	

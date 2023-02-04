@@ -1,4 +1,4 @@
-package ABP6;
+package AccesoADatos.ABP.ABP6;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -12,6 +12,7 @@ public class ABP6 {
 			String comando=in.nextLine();
 			comprobarComando(comando);
 		}
+		in.close();
 	}
 	public static void comprobarComando(String comando) throws IOException {
 		boolean existe=false;
@@ -41,7 +42,7 @@ public class ABP6 {
 		if (palabra.equals("inse")) {
 			//insert into tabla1 (nombre,apellidos,edad) values (Alvaro,Santos,20);
             //insert into tabla1 (nombre,apellidos,edad) values (Javi,Morales,19);
-			//insert into tabla2 (nombre,sueldo,edad) values (alvaro,500.2,20);
+			//insert into tabla2 (nombre,edad,sueldo) values (alvaro,20,500.2);
 			verificarInsert.confirmarInsert(comando);
 			
 			existe=true;

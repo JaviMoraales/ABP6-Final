@@ -1,4 +1,4 @@
-package ABP6;
+package AccesoADatos.ABP.ABP6;
 
 import java.io.File;
 import java.io.IOException;
